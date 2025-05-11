@@ -29,7 +29,9 @@ app.get("/notes", (req, res) => {
   try {
     console.log("REQUEST TO LOAD NOTES");
     const notes = loadNotes();
-    return res.status(200).json(notes);
+    res.status(200);
+    res.setHeader("Content-Type", "application/json");
+    return res.json(notes);
   } catch (err) {
     console.error("❌ Error during /notes GET:", err);
     return res.status(500).json({ error: "Server error loading notes." });
