@@ -73,6 +73,25 @@ app.post("/notes", (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+const http = require("http");
+const https = require("https");
+
+const sslOptions = {
+  key: fs.readFileSync(path.join(__dirname, "ssl", "key.pem")),
+  cert: fs.readFileSync(path.join(__dirname, "ssl", "cert.pem")),
+};
+
+// Start HTTPS server
+https.createServer(sslOptions, app).listen(443, () => {
+  console.log("🔒 HTTPS server listening on port 443");
 });
+
+// Optional: Redirect HTTP to HTTPS
+http
+  .createServer((req, res) => {
+    res.writeHead(301, { Location: `https://${req.headers.host}${req.url}` });
+    res.end();
+  })
+  .listen(80, () => {
+    console.log("🌐 HTTP redirect server listening on port 80");
+  });
