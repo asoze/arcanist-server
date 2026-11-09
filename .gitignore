@@ -1,2 +1,17 @@
 node_modules/
 package-lock.json
+
+# Local user data — never commit
+notes.json
+notes.test.json
+notes.*.json
+*.db
+*.db-wal
+*.db-shm
+
+# Local TLS material — never commit
+ssl/
+*.pem
+*.key
+
+.DS_Store
