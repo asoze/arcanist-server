@@ -27,10 +27,9 @@ function listToHtml(items) {
   return entries.length ? `<ul data-type="taskList">${entries.join("")}</ul>` : "";
 }
 
-function splitTitle(text) {
-  const [first, ...rest] = text.trim().split("\n");
-  if (first.length > 80) return { title: "", body: text };
-  return { title: first.replace(/^#+\s*/, "").trim(), body: rest.join("\n").trim() };
+function titleFromText(text) {
+  const first = text.trim().split("\n")[0].replace(/^#+\s*/, "").trim();
+  return first.length > 80 ? `${first.slice(0, 80).trimEnd()}…` : first;
 }
 
 /** Returns the new-format note, or null if the legacy note should be skipped. */
@@ -42,9 +41,9 @@ export function convertLegacyNote(legacy, { owner = null } = {}) {
   if (legacy.type === "list") {
     html = listToHtml(legacy.items ?? []);
   } else {
-    let markdown = legacy.content?.text ?? legacy.text ?? "";
+    const markdown = legacy.content?.text ?? legacy.text ?? "";
     if (!title && markdown.trim()) {
-      ({ title, body: markdown } = splitTitle(markdown));
+      title = titleFromText(markdown);
     }
     html = markdown.trim() ? marked.parse(markdown, { gfm: true, breaks: true, async: false }) : "";
   }

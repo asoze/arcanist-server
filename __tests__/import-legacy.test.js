@@ -24,11 +24,17 @@ describe("convertLegacyNote", () => {
     assert.equal(note.shared, false);
   });
 
-  it("uses the first line of untitled plain-text notes as the title", () => {
+  it("titles untitled plain-text notes from their first line and keeps the full text as the body", () => {
     const note = convertLegacyNote({ id: "1", text: "Groceries\nmilk\neggs", updatedAt: 1 }, { owner: "andrew" });
     assert.equal(note.title, "Groceries");
-    assert.equal(note.html, "<p>milk<br />eggs</p>\n");
+    assert.equal(note.html, "<p>Groceries<br />milk<br />eggs</p>\n");
     assert.equal(note.createdBy, "andrew");
+  });
+
+  it("keeps one-line untitled notes as body text", () => {
+    const note = convertLegacyNote({ id: "1", text: "Hello wife!" });
+    assert.equal(note.title, "Hello wife!");
+    assert.equal(note.html, "<p>Hello wife!</p>\n");
   });
 
   it("turns list notes into task lists and escapes item text", () => {
